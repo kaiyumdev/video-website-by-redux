@@ -1,13 +1,14 @@
 // import Success from "../ui/Success";
-import TextArea from "../ui/TextArea";
-import TextInput from "../ui/TextInput";
-import Success from "../ui/Success";
-import Error from "../ui/Error";
 import { useState } from "react";
 import { useAddVideoMutation } from "../../features/api/apiSlice";
+import Error from "../ui/Error";
+import Success from "../ui/Success";
+import TextArea from "../ui/TextArea";
+import TextInput from "../ui/TextInput";
 
 export default function Form() {
-  const [AddVideo, { isLoading, isError, isSuccess }] = useAddVideoMutation();
+  const [addVideo, { isLoading, isSuccess, isError }] = useAddVideoMutation();
+
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [description, setDescription] = useState("");
@@ -17,10 +18,10 @@ export default function Form() {
   const [duration, setDuration] = useState("");
   const [views, setViews] = useState("");
 
-  const reset = () => {
+  const resetForm = () => {
     setTitle("");
-    setAuthor("");
     setDescription("");
+    setAuthor("");
     setLink("");
     setThumbnail("");
     setDate("");
@@ -30,18 +31,19 @@ export default function Form() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    AddVideo({
+    addVideo({
       title,
-      author,
       description,
+      author,
       link,
       thumbnail,
       date,
       duration,
       views,
     });
-    reset();
+    resetForm();
   };
+
   return (
     <form method="POST" onSubmit={handleSubmit}>
       <div className="shadow overflow-hidden sm:rounded-md">
@@ -49,7 +51,7 @@ export default function Form() {
           <div className="grid grid-cols-6 gap-6">
             <div className="col-span-6 sm:col-span-3">
               <TextInput
-                title="Video Title"
+                title="Video title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
               />
@@ -114,6 +116,7 @@ export default function Form() {
         </div>
         <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
           <button
+            disabled={isLoading}
             type="submit"
             className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-0 focus:ring-offset-0 focus:ring-indigo-500"
           >
@@ -121,10 +124,8 @@ export default function Form() {
           </button>
         </div>
 
-        {isSuccess && (
-          <Success message="video was added successfully"></Success>
-        )}
-        {isError && <Error message="There was an error adding video"></Error>}
+        {isSuccess && <Success message="Video was added successfully" />}
+        {isError && <Error message="There was an error adding video!" />}
       </div>
     </form>
   );
